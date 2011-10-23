@@ -29,6 +29,48 @@ class ApplicationTest(unittest.TestCase):
         """ Testing the routes """
 
         # Positive tests
+        app = MockApplication(routes={ '^/$': TestResource, })
+        request = Request(path='/')
+        (resource, kwargs) = app._map_resource(request)
+        assert resource
+        assert resource == TestResource
+
+        app = MockApplication(routes={ '/.+/': TestResource, })
+        request = Request(path='/abcd/')
+        (resource, kwargs) = app._map_resource(request)
+        assert resource
+        assert resource == TestResource
+
+        app = MockApplication(routes={ '/.+/': TestResource, })
+        request = Request(path='/abcd/')
+        (resource, kwargs) = app._map_resource(request)
+        assert resource
+        assert resource == TestResource
+
+        # Negative tests
+        app = MockApplication(routes={ '/.+/': TestResource, })
+        request = Request(path='/')
+        (resource, kwargs) = app._map_resource(request)
+        assert not resource
+        assert resource == None
+
+        app = MockApplication(routes={ '/asdf/': TestResource, })
+        request = Request(path='/')
+        (resource, kwargs) = app._map_resource(request)
+        assert not resource
+        assert resource == None
+
+        app = MockApplication(routes={ '^/$': TestResource, })
+        request = Request(path='/asdf/')
+        (resource, kwargs) = app._map_resource(request)
+        assert not resource
+        assert resource == None
+
+
+    def test_arguments(self):
+        """ Testing the routes """
+
+        # Positive tests
         app = MockApplication(routes={ '/': TestResource, })
         request = Request(path='/')
         (resource, kwargs) = app._map_resource(request)
@@ -41,4 +83,3 @@ class ApplicationTest(unittest.TestCase):
         (resource, kwargs) = app._map_resource(request)
         assert not resource
         assert resource == None
-
