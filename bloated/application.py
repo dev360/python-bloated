@@ -1,10 +1,10 @@
 from werkzeug.wrappers import Request, Response
 
+from exceptions import HttpError
 
 class Application(object):
 
     def __init__(self, **kwargs):
-        self.routes = kwargs.get('routes', {})
         super(Application, self).__init__()
 
     def __call__(self, env, start_response):
@@ -15,17 +15,30 @@ class Application(object):
     def dispatch(self, env, start_response):
         """ Dispatches the application """
 
-        try:
-            pass
-        except HttpError:
-            pass
-
-        # 1. Check if the resource exists
         request = Request(env)
-        response = Response('Test')
+
+        try:
+            routes = self._routes
+            
+        except HttpError as e:
+            response = handle_error(request, e)
+        except Exception as e:
+            response = handle_error(request, HttpError(str(e)))
+
         return response(env, start_response)
 
-    def handle_404(self, env, start_response):
+    @property
+    def _routes(self):
+        routers = getattr(self, 'routes', None)
 
-        return True
+        if not routers:
+            raise HttpError(u'No routes have been specified for this application')
+
+        return routers
+
+    def handle_error(self, request, error):
+        
+        return 
+
+
 
