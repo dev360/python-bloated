@@ -20,10 +20,11 @@ class Application(object):
         response = None
 
         try:
-            (resource, kwargs) = self._map_resource(request)
+            (Resource, kwargs) = self._map_resource(request)
 
-            if resource:
-                pass
+            if Resource:
+                resource = Resource()
+                response = resource.dispatch(request, **kwargs)
             
         except HTTPException  as e:
             response = e
