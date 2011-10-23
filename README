@@ -1,0 +1,24 @@
+
+Pre-requisites:
+===============
+
+See pip.requirements.txt
+
+
+
+To run the example:
+===================
+I used gunicorn. Its not in the requirements file.
+
+$ pip install gunicorn
+$ cd python-bloated
+$ gunicorn example:application
+
+
+
+To run the tests:
+=================
+
+$ cd python-bloated/bloated
+$ python tests
+
