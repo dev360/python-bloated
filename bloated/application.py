@@ -2,11 +2,12 @@ import re
 
 from werkzeug.wrappers import Request, Response
 
-from exceptions import HTTPException, NotFound, InternalServerError
+from exceptions import HTTPException, NotFound, InternalServerError, InvalidRouteError
 
 class Application(object):
 
     def __init__(self, **kwargs):
+        self.routes_re = {}
         super(Application, self).__init__()
 
     def __call__(self, env, start_response):
@@ -54,10 +55,18 @@ class Application(object):
 
         for (route, resource) in routes.items():
 
-            pattern = re.compile(route, re.IGNORECASE)
+            pattern = self.routes_re.get(route, None)
+
+            if not pattern:
+                try:
+                    pattern = self.routes_re[route] = re.compile(route, re.IGNORECASE)
+                except Exception, e:  # re module is very general.
+                    raise InvalidRouteError(route=route, detail=str(e))
+
             match = pattern.match(url)
             if match:
-                return (resource, {})
+                return (resource, match.groupdict())
 
         return (None, None)
+
 
