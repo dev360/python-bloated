@@ -1,0 +1,9 @@
+*.pyc
+._*
+.svn
+.DS_Store
+*.swp
+*.swo
+*.py~
+build
+bloatedpy
